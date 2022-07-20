@@ -1,5 +1,5 @@
 # edtf-toolkit
-A simple php app used for validating and humanizing edtf strings
+A simple php app used for validating and humanizing edtf strings. It runs on the php edtf library built by ProfessionalWiki:  https://github.com/ProfessionalWiki/EDTF
 
 Once you deploy the app, edtf dates can be humanized at the path '/humanize' using the query string 'date='
 
