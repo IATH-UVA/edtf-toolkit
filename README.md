@@ -10,3 +10,9 @@ http://www6vm.village.virginia.edu/edtf/humanize?date=1498-05/1504
 Will return the plaintext response 'May 1498 to 1504'.
 
 Invalid edtf dates (for example, '05/1498-1504') will return a plaintext response "Invalid date".
+
+To run locally:
+
+cd into main application directory and execute:
+
+php -S localhost:8888 -t public public/index.php
