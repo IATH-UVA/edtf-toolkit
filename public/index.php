@@ -2,6 +2,7 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
+use Slim\Exception\HttpNotFoundException;
 use EDTF\EdtfFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -9,10 +10,20 @@ require __DIR__ . '/../vendor/autoload.php';
 $displayErrorDetails = true;
 
 $app = AppFactory::create();
+$app->addErrorMiddleware(true, true, true);
+$app->setBasePath("/edtf");
+
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+    return $response;
+});
 
 $app->get('/', function (Request $request, Response $response, $args) {
     $response->getBody()->write("Hello world!");
     return $response;
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
 $app->get('/humanize', function (Request $request, Response $response, $args) {
@@ -29,7 +40,7 @@ $app->get('/humanize', function (Request $request, Response $response, $args) {
         $humanizer = EdtfFactory::newHumanizerForLanguage( 'en' );
         $humanized = $humanizer->humanize($edtfValue);
 
-      }      
+      }
       $response->getBody()->write($humanized);
     } else {
       $response->getBody()->write("Invalid date");
@@ -43,9 +54,8 @@ $app->get('/humanize', function (Request $request, Response $response, $args) {
       ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
-$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function($req, $res) {
-  $handler = $this->notFoundHandler; // handle using the default Slim page not found handler
-  return $handler($req, $res);
+$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
+    throw new HttpNotFoundException($request);
 });
 
 $app->run();
