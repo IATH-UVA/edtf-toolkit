@@ -16,3 +16,10 @@ To run locally:
 cd into main application directory and execute:
 
 php -S localhost:8888 -t public public/index.php
+
+$ php -v
+PHP 8.1.7 (cli) (built: Jun  7 2022 18:21:38) (NTS gcc x86_64)
+Copyright (c) The PHP Group
+Zend Engine v4.1.7, Copyright (c) Zend Technologies
+with Zend OPcache v8.1.7, Copyright (c), by Zend Technologies
+
