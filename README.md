@@ -9,6 +9,10 @@ http://www6vm.village.virginia.edu/edtf/humanize?date=1498-05/1504
 
 Will return the plaintext response 'May 1498 to 1504'.
 
+To get number of years elapsed, use the '/elapsed_years' path and include the queries 'start' and 'end'
+
+For example,
+
 http://www6vm.village.virginia.edu/edtf/elapsed_years?start=1124&end=1179-05?
 
 Will return the plaintext response '55'.
