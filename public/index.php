@@ -11,7 +11,7 @@ $displayErrorDetails = true;
 
 $app = AppFactory::create();
 $app->addErrorMiddleware(true, true, true);
-// $app->setBasePath("/edtf");
+// $app->setBasePath("/edtf") -- this line is needed for production but commented out for local development;
 
 $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
