@@ -68,8 +68,10 @@ $app->get('/elapsed_years', function (Request $request, Response $response, $arg
       $min = $edtfValueStart->getMin();
       $edtfValueEnd = $parsingResultEnd->getEdtfValue();
       $max = $edtfValueEnd->getMax();
-      $interval = $max - $min;
-      $age = floor($interval / 60 / 60 / 24 / 365);
+      $begin = new DateTime('@' . $min);
+      $end = new DateTime('@' . $max);
+      $interval = $begin->diff($end);
+      $age = $interval->format('%y');
       $response->getBody()->write("$age");
     } else {
       $response->getBody()->write("Invalid date");
