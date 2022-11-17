@@ -36,10 +36,16 @@ $app->get('/humanize', function (Request $request, Response $response, $args) {
       if(get_class($edtfValue) === "EDTF\Model\Set") {
         $humanizer = EdtfFactory::newStructuredHumanizerForLanguage( 'en' );
         $structured = $humanizer->humanize($edtfValue);
-        $humanized_values = $structured->getStructuredHumanization();
-        $context_message = $structured->getContextMessage();
-        $first_half = join(", ",$humanized_values);
-        $humanized = "$first_half ($context_message)";
+        $simple_humanization = $structured->getSimpleHumanization();
+        if(empty($simple_humanization)) {
+          $humanized_values = $structured->getStructuredHumanization();
+          $context_message = $structured->getContextMessage();
+          $first_half = join(", ",$humanized_values);
+          $humanized = "$first_half ($context_message)";
+        }
+        else {
+          $humanized = $simple_humanization;
+        }
       } else {
         $humanizer = EdtfFactory::newHumanizerForLanguage( 'en' );
         $humanized = $humanizer->humanize($edtfValue);
