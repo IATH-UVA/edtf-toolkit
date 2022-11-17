@@ -11,7 +11,7 @@ $displayErrorDetails = true;
 
 $app = AppFactory::create();
 $app->addErrorMiddleware(true, true, true);
-// $app->setBasePath("/edtf") -- this line is needed for production but commented out for local development;
+$app->setBasePath("/edtf");
 
 $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
@@ -59,7 +59,7 @@ $app->get('/humanize', function (Request $request, Response $response, $args) {
 });
 
 $app->get('/elapsed_years', function (Request $request, Response $response, $args) {
-  
+
   if (!!$request->getQueryParams()['start'] && !!$request->getQueryParams()['end']) {
     $start = $request->getQueryParams()['start'];
     $end = $request->getQueryParams()['end'];
