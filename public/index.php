@@ -95,6 +95,32 @@ $app->get('/elapsed_years', function (Request $request, Response $response, $arg
       ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
 });
 
+$app->get('/check_coverage', function (Request $request, Response $response, $args) {
+  if (!!$request->getQueryParams()['event'] && !!$request->getQueryParams()['range']) {
+    $event = $request->getQueryParams()['event'];
+    $range = $request->getQueryParams()['range'];
+    $parser = EdtfFactory::newParser();
+    $parsingResultEvent = $parser->parse($event);
+    $parsingResultRange = $parser->parse($range);
+    if ($parsingResultEvent->isValid() && $parsingResultRange->isValid()) {
+      $edtfValueEvent = $parsingResultEvent->getEdtfValue();
+      $edtfValueRange = $parsingResultRange->getEdtfValue();
+      $coverage = ($edtfValueRange->covers($edtfValueEvent) || $edtfValueEvent->covers($edtfValueRange));
+      $stringified = $coverage ? 'true' : 'false';
+      
+      $response->getBody()->write($stringified);
+    } else {
+      $response->getBody()->write("Invalid input data");
+    }
+  } else {
+    $response->getBody()->write("No date provided");
+  };
+  return $response
+      ->withHeader('Access-Control-Allow-Origin', '*')
+      ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+      ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+});
+
 $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
     throw new HttpNotFoundException($request);
 });
