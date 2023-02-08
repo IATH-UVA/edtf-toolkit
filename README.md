@@ -17,6 +17,10 @@ http://www6vm.village.virginia.edu/edtf/elapsed_years?start=1124&end=1179-05?
 
 Will return the plaintext response '55'.
 
+http://www6vm.village.virginia.edu/edtf/check_coverage?event=[0000..1500]&range=1414/1498
+
+Will return the reponse 'true'.
+
 Invalid edtf dates (for example, '05/1498-1504') will return a plaintext response "Invalid date".
 
 To run locally:
