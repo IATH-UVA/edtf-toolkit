@@ -5,22 +5,63 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpNotFoundException;
 use Slim\App;
 use EDTF\EdtfFactory;
+use Illuminate\Database\Eloquent\Model;
+
+
+class DateInstance extends Model {
+ 
+ protected $table = 'schema2.date_instances';
+
+}
 
 return function (App $app) {
   $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
   });
 
-  $app->get('/db-test', function (Request $request, Response $response) {
-    $connStr = "host=localhost port=5432 dbname=tombs_dev";
+  $app->get('/dbtest', function (Request $request, Response $response, $args) {
 
-    $dbconn = pg_connect($connStr);
-    $sth = pg_query($dbconn, "SELECT * FROM admin_users ORDER BY id");
-    $data = var_dump(pg_fetch_all($sth));
-    $payload = json_encode($data);
-    $response->getBody()->write($payload);
+    if (!!$request->getQueryParams()['range']) {
+
+      $range = $request->getQueryParams()['range'];
+      $parser = EdtfFactory::newParser();
+
+      $parsingResultRange = $parser->parse($range);
+      if ($parsingResultRange->isValid()) {
+        $edtfValueRange = $parsingResultRange->getEdtfValue();
+
+        $all_date_instances = DateInstance::all();
+
+        $params = [$parser, $edtfValueRange];
+
+        $date_instances = array_map(function ($date_instance) use ($params) {
+          $event = $date_instance['edtf_date'];
+          $parser = $params[0];
+          $edtfValueRange = $params[1];
+          $parsingResultEvent = $parser->parse($event);
+          if ($parsingResultEvent->isValid()) {
+            $edtfValueEvent = $parsingResultEvent->getEdtfValue();
+            if (is_null($edtfValueEvent) || is_null($edtfValueRange)) {
+              $answer = false;
+            }
+            if ($edtfValueRange->covers($edtfValueEvent) || $edtfValueEvent->covers($edtfValueRange)) {
+              return $date_instance['id'];
+            }
+          }
+        }, $all_date_instances->toArray());
+
+        $payload = json_encode($date_instances);
+
+        $response->getBody()->write($payload);
+      } else {
+        $response->getBody()->write("Invalid input data");
+      }
+    } else {
+      $response->getBody()->write("No date provided");
+    };
+    
     return $response->withHeader('Content-Type', 'application/json');
-});
+  });
 
   $app->get('/', function (Request $request, Response $response, $args) {
     $response->getBody()->write("Hello world!");  

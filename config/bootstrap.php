@@ -13,13 +13,20 @@ $containerBuilder->addDefinitions(__DIR__ . '/container.php');
 // Create DI container instance
 $container = $containerBuilder->build();
 
+$dbSettings = $container->get('settings')['db'];
+$capsule = new Illuminate\Database\Capsule\Manager;
+$capsule->addConnection($dbSettings);
+$capsule->bootEloquent();
+$capsule->setAsGlobal();
+
 // Create Slim App instance
 $app = $container->get(App::class);
 
 // Register routes
-(require __DIR__ . '/routes.php')($app);
+(require '../app/routes.php')($app);
 
 // Register middleware
 (require __DIR__ . '/middleware.php')($app);
+
 
 return $app;
