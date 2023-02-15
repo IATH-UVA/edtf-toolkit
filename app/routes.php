@@ -98,7 +98,8 @@ return function (App $app) {
         }
         $response->getBody()->write($humanized);
       } else {
-        $response->getBody()->write("Invalid date");
+        $errorMessage = $parsingResult->getErrorMessage();
+        $response->getBody()->write("Invalid date. $errorMessage");
       }
     } else {
       $response->getBody()->write("No date provided");

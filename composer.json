@@ -2,7 +2,7 @@
     "require": {
         "slim/slim": "4.*",
         "slim/psr7": "^1.5",
-        "professional-wiki/edtf": "~2.0",
+        "professional-wiki/edtf": "~3.0",
         "php-di/php-di": "^7.0",
         "illuminate/database": "^9.51"
     },

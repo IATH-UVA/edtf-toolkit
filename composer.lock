@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b50d0767e25f2ea42f5de44121f218d",
+    "content-hash": "4d94ba936987afbd23776e33f7e65b07",
     "packages": [
         {
             "name": "brick/math",
@@ -937,16 +937,16 @@
         },
         {
             "name": "professional-wiki/edtf",
-            "version": "2.0.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ProfessionalWiki/EDTF.git",
-                "reference": "2cebb350e0b703d202e6a3a31daf15aa2adb88a7"
+                "reference": "c778b2628c32082dd02fa1dd677f8ab7aae539fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ProfessionalWiki/EDTF/zipball/2cebb350e0b703d202e6a3a31daf15aa2adb88a7",
-                "reference": "2cebb350e0b703d202e6a3a31daf15aa2adb88a7",
+                "url": "https://api.github.com/repos/ProfessionalWiki/EDTF/zipball/c778b2628c32082dd02fa1dd677f8ab7aae539fd",
+                "reference": "c778b2628c32082dd02fa1dd677f8ab7aae539fd",
                 "shasum": ""
             },
             "require": {
@@ -985,7 +985,7 @@
             "description": "PHP library to parse, represent and work with dates that follow the Extended Date/Time Format specification.",
             "support": {
                 "issues": "https://github.com/ProfessionalWiki/EDTF/issues",
-                "source": "https://github.com/ProfessionalWiki/EDTF/tree/2.0.2"
+                "source": "https://github.com/ProfessionalWiki/EDTF/tree/3.0.0"
             },
             "funding": [
                 {
@@ -993,7 +993,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-04-29T13:08:22+00:00"
+            "time": "2023-01-18T00:00:24+00:00"
         },
         {
             "name": "psr/container",
