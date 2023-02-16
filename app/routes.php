@@ -5,21 +5,14 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpNotFoundException;
 use Slim\App;
 use EDTF\EdtfFactory;
-use Illuminate\Database\Eloquent\Model;
-
-
-class DateInstance extends Model {
- 
- protected $table = 'schema2.date_instances';
-
-}
+require '../config/db.php';
 
 return function (App $app) {
   $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
   });
 
-  $app->get('/dbtest', function (Request $request, Response $response, $args) {
+  $app->get('/tombs/date_instance_individuals_covers', function (Request $request, Response $response, $args) {
 
     if (!!$request->getQueryParams()['range']) {
 
@@ -29,12 +22,15 @@ return function (App $app) {
       $parsingResultRange = $parser->parse($range);
       if ($parsingResultRange->isValid()) {
         $edtfValueRange = $parsingResultRange->getEdtfValue();
+        $db = new db();
+        $db = $db->connect();
 
-        $all_date_instances = DateInstance::all();
+
+        $all_date_instances = pg_query($db, "SELECT date_instances.id, date_instance_individuals.id as date_instance_individuals_id, date_instance_individuals.individual_id as individual_id, edtf_date FROM schema2.date_instances inner join schema2.date_instance_individuals on schema2.date_instances.id = schema2.date_instance_individuals.date_instance_id");
 
         $params = [$parser, $edtfValueRange];
 
-        $date_instances = array_map(function ($date_instance) use ($params) {
+        $date_instances = array_filter(pg_fetch_all($all_date_instances), function ($date_instance) use ($params) {
           $event = $date_instance['edtf_date'];
           $parser = $params[0];
           $edtfValueRange = $params[1];
@@ -43,12 +39,18 @@ return function (App $app) {
             $edtfValueEvent = $parsingResultEvent->getEdtfValue();
             if (is_null($edtfValueEvent) || is_null($edtfValueRange)) {
               $answer = false;
+            } else {
+              if ($edtfValueRange->covers($edtfValueEvent) || $edtfValueEvent->covers($edtfValueRange)) {
+                $answer = true;
+              } else {
+                $answer = false;
+              }
             }
-            if ($edtfValueRange->covers($edtfValueEvent) || $edtfValueEvent->covers($edtfValueRange)) {
-              return $date_instance['id'];
-            }
+          } else {
+            $answer = false;
           }
-        }, $all_date_instances->toArray());
+          return $answer;
+        });
 
         $payload = json_encode($date_instances);
 
