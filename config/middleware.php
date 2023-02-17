@@ -11,4 +11,7 @@ return function (App $app) {
 
     // Handle exceptions
     $app->addErrorMiddleware(true, true, true);
+
+    // needed in production
+    // $app->setBasePath("/edtf");
 };

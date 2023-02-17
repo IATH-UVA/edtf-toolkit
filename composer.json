@@ -3,7 +3,8 @@
         "slim/slim": "4.*",
         "slim/psr7": "^1.5",
         "professional-wiki/edtf": "~3.0",
-        "php-di/php-di": "^7.0"
+        "php-di/php-di": "^7.0",
+        "vlucas/phpdotenv": "^5.5"
     },
     "autoload": {
       "psr-4": {
