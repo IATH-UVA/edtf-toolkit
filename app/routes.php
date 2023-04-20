@@ -5,7 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpNotFoundException;
 use Slim\App;
 use EDTF\EdtfFactory;
-require '../config/db.php';
+require './config/db.php';
 
 function filter_date_instances($all_date_instances, $parser, $edtfValueRange) {
   $params = [$parser, $edtfValueRange];
@@ -71,29 +71,7 @@ return function (App $app) {
 
         $all_date_instances = pg_query($db, "SELECT date_instances.id, date_instance_individuals.id as date_instance_individuals_id, date_instance_individuals.individual_id as individual_id, edtf_date FROM schema2.date_instances inner join schema2.date_instance_individuals on schema2.date_instances.id = schema2.date_instance_individuals.date_instance_id");
 
-        $params = [$parser, $edtfValueRange];
-
-        $date_instances = array_filter(pg_fetch_all($all_date_instances), function ($date_instance) use ($params) {
-          $event = $date_instance['edtf_date'];
-          $parser = $params[0];
-          $edtfValueRange = $params[1];
-          $parsingResultEvent = $parser->parse($event);
-          if ($parsingResultEvent->isValid()) {
-            $edtfValueEvent = $parsingResultEvent->getEdtfValue();
-            if (is_null($edtfValueEvent) || is_null($edtfValueRange)) {
-              $answer = false;
-            } else {
-              if ($edtfValueRange->covers($edtfValueEvent) || $edtfValueEvent->covers($edtfValueRange)) {
-                $answer = true;
-              } else {
-                $answer = false;
-              }
-            }
-          } else {
-            $answer = false;
-          }
-          return $answer;
-        });
+        $date_instances = filter_date_instances($all_date_instances, $parser, $edtfValueRange);
 
         $payload = json_encode($date_instances);
 

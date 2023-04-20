@@ -13,5 +13,5 @@ return function (App $app) {
     $app->addErrorMiddleware(true, true, true);
 
     // needed in production
-    // $app->setBasePath("/edtf");
+    $app->setBasePath("/edtf");
 };
