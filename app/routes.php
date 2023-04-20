@@ -7,10 +7,53 @@ use Slim\App;
 use EDTF\EdtfFactory;
 require '../config/db.php';
 
+function filter_date_instances($all_date_instances, $parser, $edtfValueRange) {
+  $params = [$parser, $edtfValueRange];
+
+  $date_instances = array_filter(pg_fetch_all($all_date_instances), function ($date_instance) use ($params) {
+    $event = $date_instance['edtf_date'];
+    $parser = $params[0];
+    $edtfValueRange = $params[1];
+    $parsingResultEvent = $parser->parse($event);
+    if ($parsingResultEvent->isValid()) {
+      $edtfValueEvent = $parsingResultEvent->getEdtfValue();
+      if (is_null($edtfValueEvent) || is_null($edtfValueRange)) {
+        $answer = false;
+      } else {
+        if ($edtfValueRange->covers($edtfValueEvent) || $edtfValueEvent->covers($edtfValueRange)) {
+          $answer = true;
+        } else {
+          $answer = false;
+        }
+      }
+    } else {
+      $answer = false;
+    }
+    return $answer;
+  });
+
+  return $date_instances;
+}
+
 return function (App $app) {
   $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
   });
+
+  // $app->get('/tombs/groups_priorate_first_and_last_covers', function (Request $request, Response $response, $args) {
+  //   if (!!$request->getQueryParams()['range']) {
+  //     $range = $request->getQueryParams()['range'];
+  //     $parser = EdtfFactory::newParser();
+
+  //     $parsingResultRange = $parser->parse($range);
+  //     if ($parsingResultRange->isValid()) {
+  //       $edtfValueRange = $parsingResultRange->getEdtfValue();
+  //       $db = new db();
+  //       $db = $db->connect();
+
+  //       $all_years = pg_query($db, )
+
+  // });
 
   $app->get('/tombs/date_instance_individuals_covers', function (Request $request, Response $response, $args) {
 
@@ -51,6 +94,37 @@ return function (App $app) {
           }
           return $answer;
         });
+
+        $payload = json_encode($date_instances);
+
+        $response->getBody()->write($payload);
+      } else {
+        $response->getBody()->write("Invalid input data");
+      }
+    } else {
+      $response->getBody()->write("No date provided");
+    };
+    
+    return $response->withHeader('Content-Type', 'application/json');
+  });
+
+  $app->get('/tombs/date_instance_memorials_covers', function (Request $request, Response $response, $args) {
+
+    if (!!$request->getQueryParams()['range']) {
+
+      $range = $request->getQueryParams()['range'];
+      $parser = EdtfFactory::newParser();
+
+      $parsingResultRange = $parser->parse($range);
+      if ($parsingResultRange->isValid()) {
+        $edtfValueRange = $parsingResultRange->getEdtfValue();
+        $db = new db();
+        $db = $db->connect();
+
+
+        $all_date_instances = pg_query($db, "SELECT date_instances.id, date_instance_memorials.id as date_instance_memorials_id, date_instance_memorials.memorial_id as memorial_id, edtf_date FROM schema2.date_instances inner join schema2.date_instance_memorials on schema2.date_instances.id = schema2.date_instance_memorials.date_instance_id");
+
+        $date_instances = filter_date_instances($all_date_instances, $parser, $edtfValueRange);
 
         $payload = json_encode($date_instances);
 
