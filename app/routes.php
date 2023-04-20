@@ -5,7 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Exception\HttpNotFoundException;
 use Slim\App;
 use EDTF\EdtfFactory;
-require './config/db.php';
+require '../config/db.php';
 
 function filter_date_instances($all_date_instances, $parser, $edtfValueRange) {
   $params = [$parser, $edtfValueRange];
