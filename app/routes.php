@@ -69,7 +69,7 @@ return function (App $app) {
         $db = $db->connect();
 
 
-        $all_date_instances = pg_query($db, "SELECT date_instances.id, date_instance_individuals.id as date_instance_individuals_id, date_instance_individuals.individual_id as individual_id, edtf_date FROM schema2.date_instances inner join schema2.date_instance_individuals on schema2.date_instances.id = schema2.date_instance_individuals.date_instance_id");
+        $all_date_instances = pg_query($db, "SELECT date_instances.id, date_instance_individuals.id as date_instance_individuals_id, date_instance_individuals.individual_id as individual_id, edtf_date FROM date_instances inner join date_instance_individuals on date_instances.id = date_instance_individuals.date_instance_id");
 
         $date_instances = filter_date_instances($all_date_instances, $parser, $edtfValueRange);
 
@@ -100,7 +100,7 @@ return function (App $app) {
         $db = $db->connect();
 
 
-        $all_date_instances = pg_query($db, "SELECT date_instances.id, date_instance_memorials.id as date_instance_memorials_id, date_instance_memorials.memorial_id as memorial_id, edtf_date FROM schema2.date_instances inner join schema2.date_instance_memorials on schema2.date_instances.id = schema2.date_instance_memorials.date_instance_id");
+        $all_date_instances = pg_query($db, "SELECT date_instances.id, date_instance_memorials.id as date_instance_memorials_id, date_instance_memorials.memorial_id as memorial_id, edtf_date FROM date_instances inner join date_instance_memorials on date_instances.id = date_instance_memorials.date_instance_id");
 
         $date_instances = filter_date_instances($all_date_instances, $parser, $edtfValueRange);
 
